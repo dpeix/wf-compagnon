@@ -1,0 +1,5 @@
+# Keep LF in the working tree to match .editorconfig and Prettier (core.autocrlf is on for this machine)
+* text=auto eol=lf
+*.png binary
+*.ico binary
+*.icns binary
