@@ -1,0 +1,17 @@
+# Tests and guardrails need the owner's review (only enforced with branch protection)
+*.test.ts               @dpeix
+*.test.tsx              @dpeix
+fixtures/               @dpeix
+__fixtures__/           @dpeix
+/.claude/               @dpeix
+/.github/               @dpeix
+/CLAUDE.md              @dpeix
+/package.json           @dpeix
+/eslint.config.mjs      @dpeix
+/tsconfig*.json         @dpeix
+/vitest.config.ts       @dpeix
+/stryker.config.json    @dpeix
+/knip.json              @dpeix
+/lefthook.yml           @dpeix
+/.prettierrc.yaml       @dpeix
+/.prettierignore        @dpeix
