@@ -21,6 +21,7 @@ Versions installées (relevées le 26/10/2026). Avant d'utiliser une API, vérif
 | tailwindcss + @tailwindcss/vite       | 4.3                | Styles                                 | Config **en CSS** (`@import 'tailwindcss'`, `@theme` dans `src/renderer/src/assets/main.css`). Pas de `tailwind.config.js`, pas de directives `@tailwind`. |
 | shadcn/ui (style new-york) + radix-ui | radix-ui 1.8       | Composants                             | Paquet unifié `radix-ui` (`import { Slot } from 'radix-ui'`), pas de paquets `@radix-ui/react-*`. Ajout via `npx shadcn@latest add`.                       |
 | lucide-react                          | 1.61               | Icônes                                 | —                                                                                                                                                          |
+| @fontsource-variable/geist (+ -mono)  | 5.3                | Polices Geist / Geist Mono embarquées  | Importées dans `main.tsx`, branchées via `--font-sans` / `--font-mono` dans `main.css`. Pas de police distante (CSP).                                      |
 | eslint                                | 9.39               | Lint                                   | **Flat config** (`eslint.config.mjs`), jamais `.eslintrc`.                                                                                                 |
 | typescript-eslint                     | 8.72               | Lint typé                              | Presets `strictTypeChecked` + `stylisticTypeChecked`.                                                                                                      |
 | prettier                              | 3.9                | Formatage                              | Sans point-virgule, guillemets simples, 100 colonnes, pas de virgule finale.                                                                               |
@@ -39,9 +40,14 @@ src/
 ├── main/       # Processus principal (Node) : tout accès disque et réseau
 ├── preload/    # Pont contextBridge : expose window.api, rien d'autre
 └── renderer/   # Interface React (alias @/ et @renderer/ → src/renderer/src)
-    └── src/components/ui/   # Composants shadcn générés (knip les ignore)
+    └── src/
+        ├── components/ui/   # Composants shadcn générés (knip les ignore)
+        ├── components/      # Composants partagés entre fonctionnalités
+        └── features/<nom>/  # Une fonctionnalité : composants, logique pure + tests, types
 ```
 
+- Dans une fonctionnalité, la logique d'affichage (formatage, calcul de graphiques, tris) est en **fonctions pures** testées (`format.ts` + `format.test.ts`) ; les composants `.tsx` restent minces et n'exportent que des composants.
+- Couleurs propres à l'app (en plus des tokens shadcn) : `wf-gold` (accent) et `success` (hausses), définies dans `main.css`. Les baisses utilisent `destructive`.
 - Toute la logique qui touche au disque ou au réseau vit dans le **main**. Le renderer n'a accès ni aux fichiers ni à Node.
 - Le preload expose des méthodes précises (`window.api.arbitrations.getSchedule()`…), **jamais** `ipcRenderer`. Un canal IPC par action ; le main valide les arguments reçus.
 - Les types partagés (messages IPC) iront dans `src/shared/`, à ajouter à l'`include` de `tsconfig.node.json` **et** de `tsconfig.web.json`.
