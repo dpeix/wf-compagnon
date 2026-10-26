@@ -63,6 +63,19 @@ export interface ItemDetail {
   saleChances: readonly { price: number; chance: number; delay: string }[]
 }
 
+/** What the "Meilleures heures" screen knows about one scope (whole market or one item). */
+export interface SalesWeek {
+  /** Average sales per hour: 7 days (Monday first) × 24 hours */
+  sales: readonly (readonly number[])[]
+  /** Median time to sell, in minutes, for each hour of the day */
+  medianDelay: readonly number[]
+  /** Average number of sellers in game, for each hour of the day */
+  sellersInGame: readonly number[]
+  /** Days of snapshots recorded so far, and how many make the map reliable */
+  daysCollected: number
+  daysNeeded: number
+}
+
 export interface PlayersSummary {
   inGame: number
   /** Compared with the same hour yesterday, as a ratio */

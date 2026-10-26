@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ComingSoon } from '@/components/coming-soon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { sampleSalesWeeks } from './best-hours-sample-data'
+import { BestHoursView } from './best-hours-view'
 import { ItemDetail } from './item-detail'
 import { sampleItemDetail } from './item-sample-data'
 import { MarketOverview } from './market-overview'
@@ -15,16 +17,6 @@ import { useCurrentHour } from './use-current-hour'
 
 // Screens of the Figma mockup that are not built yet
 const upcomingSections = [
-  {
-    id: 'best-hours',
-    label: 'Meilleures heures',
-    description: 'Quand publier ses ordres pour vendre vite.',
-    upcoming: [
-      'Carte de chaleur jour × heure des ventes',
-      "Délai de vente médian selon l'heure",
-      'Top 3 des créneaux et créneaux à éviter'
-    ]
-  },
   {
     id: 'my-orders',
     label: 'Mes ordres & suivi',
@@ -56,6 +48,9 @@ export function MarketTab(): React.JSX.Element {
           <TabsTrigger value="item" className={SUBTAB_CLASSES}>
             Fiche objet
           </TabsTrigger>
+          <TabsTrigger value="best-hours" className={SUBTAB_CLASSES}>
+            Meilleures heures
+          </TabsTrigger>
           {upcomingSections.map(({ id, label }) => (
             <TabsTrigger key={id} value={id} className={SUBTAB_CLASSES}>
               {label}
@@ -76,6 +71,13 @@ export function MarketTab(): React.JSX.Element {
       </TabsContent>
       <TabsContent value="item">
         <ItemDetail item={itemDetail} />
+      </TabsContent>
+      <TabsContent value="best-hours">
+        <BestHoursView
+          market={sampleSalesWeeks.market}
+          item={sampleSalesWeeks.item}
+          itemName={itemDetail.name}
+        />
       </TabsContent>
       {upcomingSections.map(({ id, label, description, upcoming }) => (
         <TabsContent key={id} value={id} className="p-6">

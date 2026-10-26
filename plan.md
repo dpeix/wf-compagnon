@@ -188,7 +188,8 @@ Maquette Figma de l'onglet Marché (4 écrans) : « WF Compagnon — Maquette Ma
 - [x] Onglet Marché et sous-navigation ; écran « Vue d'ensemble » avec des données d'exemple (`src/renderer/src/features/market/`)
 - [ ] Client warframe.market (file d'attente, cache, validation)
 - [x] Écran « Fiche objet » avec des données d'exemple (courbe de prix, ordres, recommandation, set ou pièces)
-- [ ] Brancher la vue d'ensemble et la fiche objet sur les vraies données à la place de `sample-data.ts` et `item-sample-data.ts`
+- [x] Écran « Meilleures heures » avec des données d'exemple (top 3 des créneaux, carte de chaleur jour × heure, délai de vente, créneaux à éviter)
+- [ ] Brancher les écrans sur les vraies données à la place des fichiers `*sample-data.ts` ; enregistrer les relevés horaires (ventes, vendeurs en jeu, délai) jour par jour pour la carte de chaleur
 - [ ] Recherche d'objet pour ouvrir sa fiche
 - [ ] Liste des objets en cache, écrans M1 et M2
 - [ ] Écran M3 (graphique, par exemple avec Recharts)
