@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { ComingSoon } from '@/components/coming-soon'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ItemDetail } from './item-detail'
+import { sampleItemDetail } from './item-sample-data'
 import { MarketOverview } from './market-overview'
 import {
   sampleEvents,
@@ -12,17 +15,6 @@ import { useCurrentHour } from './use-current-hour'
 
 // Screens of the Figma mockup that are not built yet
 const upcomingSections = [
-  {
-    id: 'item',
-    label: 'Fiche objet',
-    description: "Tout savoir sur un objet avant de l'acheter ou de le vendre.",
-    upcoming: [
-      'Courbe de prix sur 48 h, 7 j, 30 j et 90 j avec volume',
-      'Ordres en cours et message de whisper à copier',
-      'Prix conseillé et chance de vendre selon le prix',
-      'Set ou pièces séparées : ce qui rapporte le plus'
-    ]
-  },
   {
     id: 'best-hours',
     label: 'Meilleures heures',
@@ -51,6 +43,8 @@ const SUBTAB_CLASSES =
 
 export function MarketTab(): React.JSX.Element {
   const currentHour = useCurrentHour()
+  // Generated once: the sample history is anchored on the time the tab opened
+  const [itemDetail] = useState(() => sampleItemDetail(new Date()))
   return (
     <Tabs defaultValue="overview" className="gap-0">
       <div className="border-b px-6">
@@ -58,6 +52,9 @@ export function MarketTab(): React.JSX.Element {
         <TabsList variant="line" className="group-data-[orientation=horizontal]/tabs:h-12">
           <TabsTrigger value="overview" className={SUBTAB_CLASSES}>
             Vue d&apos;ensemble
+          </TabsTrigger>
+          <TabsTrigger value="item" className={SUBTAB_CLASSES}>
+            Fiche objet
           </TabsTrigger>
           {upcomingSections.map(({ id, label }) => (
             <TabsTrigger key={id} value={id} className={SUBTAB_CLASSES}>
@@ -76,6 +73,9 @@ export function MarketTab(): React.JSX.Element {
           salesChangeVsYesterday={sampleSalesChangeVsYesterday}
           events={sampleEvents}
         />
+      </TabsContent>
+      <TabsContent value="item">
+        <ItemDetail item={itemDetail} />
       </TabsContent>
       {upcomingSections.map(({ id, label, description, upcoming }) => (
         <TabsContent key={id} value={id} className="p-6">

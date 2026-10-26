@@ -47,7 +47,7 @@ src/
 ```
 
 - Dans une fonctionnalité, la logique d'affichage (formatage, calcul de graphiques, tris) est en **fonctions pures** testées (`format.ts` + `format.test.ts`) ; les composants `.tsx` restent minces et n'exportent que des composants.
-- Couleurs propres à l'app (en plus des tokens shadcn) : `wf-gold` (accent) et `success` (hausses), définies dans `main.css`. Les baisses utilisent `destructive`.
+- Couleurs propres à l'app (en plus des tokens shadcn) : `wf-gold` (accent), `success` (hausses) et `info` (joueurs en ligne), définies dans `main.css`. Les baisses utilisent `destructive`.
 - Toute la logique qui touche au disque ou au réseau vit dans le **main**. Le renderer n'a accès ni aux fichiers ni à Node.
 - Le preload expose des méthodes précises (`window.api.arbitrations.getSchedule()`…), **jamais** `ipcRenderer`. Un canal IPC par action ; le main valide les arguments reçus.
 - Les types partagés (messages IPC) iront dans `src/shared/`, à ajouter à l'`include` de `tsconfig.node.json` **et** de `tsconfig.web.json`.

@@ -187,7 +187,9 @@ Maquette Figma de l'onglet Marché (4 écrans) : « WF Compagnon — Maquette Ma
 
 - [x] Onglet Marché et sous-navigation ; écran « Vue d'ensemble » avec des données d'exemple (`src/renderer/src/features/market/`)
 - [ ] Client warframe.market (file d'attente, cache, validation)
-- [ ] Brancher la vue d'ensemble sur les vraies données à la place de `sample-data.ts`
+- [x] Écran « Fiche objet » avec des données d'exemple (courbe de prix, ordres, recommandation, set ou pièces)
+- [ ] Brancher la vue d'ensemble et la fiche objet sur les vraies données à la place de `sample-data.ts` et `item-sample-data.ts`
+- [ ] Recherche d'objet pour ouvrir sa fiche
 - [ ] Liste des objets en cache, écrans M1 et M2
 - [ ] Écran M3 (graphique, par exemple avec Recharts)
 - [ ] **Livrable :** je cherche « Ash Prime Set » et je vois les meilleurs prix et l'historique
