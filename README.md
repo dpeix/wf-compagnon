@@ -1,34 +1,46 @@
-# wf-compagnon
+# WF Compagnon
 
-An Electron application with React and TypeScript
+App de bureau perso pour Warframe, sans Overwolf : prix **warframe.market** et suivi des **arbitrages**.
 
-## Recommended IDE Setup
+Stack : Electron (electron-vite), React + TypeScript, Tailwind CSS v4, shadcn/ui.
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+Ce que fera l'app, son architecture et les étapes de développement : voir [plan.md](plan.md).
 
-## Project Setup
+## Prérequis
 
-### Install
+- Node.js 24 (installé avec nvm-windows : lancer `nvm use 24.22.1` une fois, dans un terminal administrateur)
+- npm
+
+## Commandes
+
+| Commande            | Rôle                                                 |
+| ------------------- | ---------------------------------------------------- |
+| `npm install`       | Installer les dépendances                            |
+| `npm run dev`       | Lancer l'app en développement (rechargement à chaud) |
+| `npm run typecheck` | Vérifier les types TypeScript                        |
+| `npm run lint`      | Lancer ESLint                                        |
+| `npm run format`    | Formater le code avec Prettier                       |
+| `npm run build`     | Vérifier les types puis compiler dans `out/`         |
+| `npm start`         | Lancer la version compilée (aperçu du build)         |
+| `npm run build:win` | Construire l'installeur Windows dans `dist/`         |
+
+## Ajouter un composant shadcn/ui
 
 ```bash
-$ npm install
+npx shadcn@latest add <composant>
 ```
 
-### Development
+Les composants arrivent dans `src/renderer/src/components/ui/`. Si un fichier généré importe `cn` depuis `"cn"`, remplace l'import par `"@/lib/utils"` et désinstalle le paquet `cn` que la CLI a pu ajouter.
 
-```bash
-$ npm run dev
+## Organisation
+
 ```
-
-### Build
-
-```bash
-# For windows
-$ npm run build:win
-
-# For macOS
-$ npm run build:mac
-
-# For Linux
-$ npm run build:linux
+src/
+├── main/       # Processus principal Electron (fichiers, réseau)
+├── preload/    # Pont sécurisé entre main et renderer
+└── renderer/   # Interface React
+    └── src/
+        ├── components/ui/   # Composants shadcn/ui (générés)
+        ├── lib/utils.ts     # Helper cn()
+        └── App.tsx
 ```
