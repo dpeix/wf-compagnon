@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "mutate": ["src/main/**/*.ts", "src/shared/**/*.ts", "!**/*.test.ts", "!src/main/index.ts"],
+  "reporters": ["clear-text", "progress", "html"],
+  "thresholds": { "high": 80, "low": 60, "break": 60 },
+  "incremental": true,
+  "incrementalFile": "reports/stryker-incremental.json"
+}

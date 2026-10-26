@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Edit(/.claude/**)",
+      "Edit(/.github/**)",
+      "Edit(/eslint.config.mjs)",
+      "Edit(/tsconfig*.json)",
+      "Edit(/vitest.config.*)",
+      "Edit(/stryker.config.json)",
+      "Edit(/knip.json)",
+      "Edit(/lefthook.yml)",
+      "Edit(/.prettierrc.yaml)",
+      "Edit(/.prettierignore)",
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(git *--no-verify*)",
+      "Bash(git commit -n*)",
+      "Bash(gh pr create *)",
+      "PowerShell(git push)",
+      "PowerShell(git push *)",
+      "PowerShell(git *--no-verify*)",
+      "PowerShell(git commit -n*)",
+      "PowerShell(gh pr create *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-tests.mjs\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-file.mjs\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,13 +1,47 @@
 import { defineConfig } from 'eslint/config'
-import tseslint from '@electron-toolkit/eslint-config-ts'
+import eslint from '@eslint/js'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
+import vitest from '@vitest/eslint-plugin'
 import eslintConfigPrettier from '@electron-toolkit/eslint-config-prettier'
 import eslintPluginReact from 'eslint-plugin-react'
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 import eslintPluginReactRefresh from 'eslint-plugin-react-refresh'
 
 export default defineConfig(
-  { ignores: ['**/node_modules', '**/dist', '**/out'] },
-  tseslint.configs.recommended,
+  { ignores: ['**/node_modules', '**/dist', '**/out', 'reports', '.stryker-tmp'] },
+  eslint.configs.recommended,
+  // Type-aware presets: they flag what generated code tends to slip in
+  // (floating promises, unsafe any, needless assertions, always-true conditions)
+  tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  {
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname }
+    },
+    rules: {
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      // Kept from @electron-toolkit/eslint-config-ts, which this config replaces
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+          allowIIFEs: true
+        }
+      ]
+    }
+  },
+  {
+    // Plain JS files (configs, Claude Code hooks) are not part of any tsconfig
+    files: ['**/*.{js,mjs,cjs}'],
+    extends: [tseslint.configs.disableTypeChecked],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off'
+    }
+  },
   eslintPluginReact.configs.flat.recommended,
   eslintPluginReact.configs.flat['jsx-runtime'],
   {
@@ -26,6 +60,16 @@ export default defineConfig(
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
       ...eslintPluginReactRefresh.configs.vite.rules
+    }
+  },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    plugins: { vitest },
+    rules: {
+      ...vitest.configs.recommended.rules,
+      // A focused or skipped test silently disables the rest of the suite
+      'vitest/no-focused-tests': 'error',
+      'vitest/no-disabled-tests': 'error'
     }
   },
   {

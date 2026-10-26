@@ -1,0 +1,21 @@
+# Git hooks (https://lefthook.dev/configuration/). Never bypass them with --no-verify.
+
+pre-commit:
+  piped: true
+  jobs:
+    - name: format
+      glob: '*.{ts,tsx,js,mjs,cjs,json,css,html,md,yml,yaml}'
+      run: npx prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+
+    - name: lint
+      glob: '*.{ts,tsx,js,mjs,cjs}'
+      run: npx eslint --max-warnings 0 {staged_files}
+
+pre-push:
+  jobs:
+    - name: typecheck
+      run: npm run typecheck
+
+    - name: test
+      run: npm test
