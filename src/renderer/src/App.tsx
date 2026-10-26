@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-type Section = {
+interface Section {
   id: string
   label: string
   icon: LucideIcon
@@ -11,8 +11,9 @@ type Section = {
   upcoming: string[]
 }
 
-// Placeholder content until the features described in plan.md are built
-const sections: Section[] = [
+// Placeholder content until the features described in plan.md are built.
+// Typed as non-empty so the first tab can serve as the default one.
+const sections: [Section, ...Section[]] = [
   {
     id: 'market',
     label: 'Marché',
