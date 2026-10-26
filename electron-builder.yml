@@ -8,7 +8,9 @@ files:
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md,plan.md,components.json}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
-  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!{tsconfig.json,tsconfig.base.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!{CLAUDE.md,.nvmrc,vitest.config.ts,stryker.config.json,knip.json,lefthook.yml}'
+  - '!{.claude,.github,reports,.stryker-tmp}/**'
 asarUnpack:
   - resources/**
 win:
