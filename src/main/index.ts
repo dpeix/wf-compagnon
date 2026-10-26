@@ -1,19 +1,29 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+// Only https links are handed to the OS: other schemes (file:, ms-settings:…) could launch
+// local programs once the app displays remote content
+function openHttpsExternally(url: string): void {
+  if (!URL.canParse(url) || new URL(url).protocol !== 'https:') return
+  shell.openExternal(url).catch((error) => console.error('Failed to open external link', error))
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1100,
+    height: 720,
+    title: 'WF Compagnon',
+    // Matches the dark theme background to avoid a white flash on startup
+    backgroundColor: '#0a0a0a',
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: true
     }
   })
 
@@ -21,9 +31,14 @@ function createWindow(): void {
     mainWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
+  // The window never navigates away from the app: links open in the default browser instead
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    openHttpsExternally(url)
     return { action: 'deny' }
+  })
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    event.preventDefault()
+    openHttpsExternally(url)
   })
 
   // HMR for renderer base on electron-vite cli.
@@ -40,7 +55,7 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.dpeix.wf-compagnon')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -48,9 +63,6 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
-
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
 
