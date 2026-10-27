@@ -183,9 +183,17 @@ Stockage : fichiers JSON dans `app.getPath('userData')` pour commencer. On passe
 
 ### ⬜ Sprint 3 — Prix du marché
 
-- [ ] Client warframe.market (file d'attente, cache, validation)
-- [ ] Liste des objets en cache, écrans M1 et M2
-- [ ] Écran M3 (graphique, par exemple avec Recharts)
+Maquette Figma de l'onglet Marché (4 écrans) : « WF Compagnon — Maquette Marché ».
+
+- [x] Onglet Marché et sous-navigation ; écran « Vue d'ensemble » avec des données d'exemple (`src/renderer/src/features/market/`)
+- [x] Client warframe.market dans le main (file d'attente, cache, validation zod) : `src/main/market/`
+- [x] Écran « Fiche objet » avec des données d'exemple (courbe de prix, ordres, recommandation, set ou pièces)
+- [x] Écran « Meilleures heures » avec des données d'exemple (top 3 des créneaux, carte de chaleur jour × heure, délai de vente, créneaux à éviter)
+- [x] Écran « Mes ordres & suivi » avec des données d'exemple, en aperçu local (rang de chaque ordre, suggestions de prix, liste de suivi) ; l'envoi des changements viendra avec la connexion (sprint 4)
+- [x] Vue d'ensemble et fiche objet sur les vraies données (objets suivis : `src/main/market/tracked-items.ts`) ; un clic sur un objet de la vue d'ensemble ouvre sa fiche
+- [ ] Recherche d'objet pour ouvrir n'importe quelle fiche
+- [ ] Événements du jeu (worldstate) dans la vue d'ensemble, retirés en attendant une source réelle
+- [ ] Enregistrer les relevés horaires (ventes, vendeurs en jeu, délai) jour par jour : « Meilleures heures » et la chance de vendre selon le prix en dépendent
 - [ ] **Livrable :** je cherche « Ash Prime Set » et je vois les meilleurs prix et l'historique
 
 ### ⬜ Sprint 4 — Mes ordres

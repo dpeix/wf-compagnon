@@ -24,6 +24,10 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  /* App accents (Figma mockup): Orokin gold, price rises, players online */
+  --wf-gold: oklch(0.6 0.11 85);
+  --success: oklch(0.6 0.17 149.6);
+  --info: oklch(0.55 0.17 254.6);
 }
 
 .dark {
@@ -47,9 +51,18 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+  --wf-gold: oklch(0.74 0.11 85); /* #c9a64a */
+  --success: oklch(0.723 0.219 149.579); /* #22c55e */
+  --info: oklch(0.707 0.165 254.624); /* #60a5fa */
 }
 
 @theme inline {
+  /* Geist is the shadcn/ui default font and the one used in the Figma mockup */
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+  --color-wf-gold: var(--wf-gold);
+  --color-success: var(--success);
+  --color-info: var(--info);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

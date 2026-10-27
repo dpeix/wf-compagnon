@@ -1,8 +1,28 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, ipcMain, net, shell, screen, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { isSafeExternalUrl } from './external-links'
+import { createMarketClient } from './market/client'
+import { registerMarketIpc } from './market/ipc'
+import { createMarketService } from './market/service'
+import { TRACKED_ITEMS } from './market/tracked-items'
+
+function setUpMarket(): void {
+  const client = createMarketClient({
+    // Chromium's network stack: follows the system proxy settings, like the browser
+    fetch: (url, init) => net.fetch(url, init),
+    now: () => Date.now(),
+    sleep: (ms) =>
+      new Promise((resolve) => {
+        setTimeout(resolve, ms)
+      })
+  })
+  registerMarketIpc(
+    ipcMain,
+    createMarketService({ client, trackedSlugs: TRACKED_ITEMS, now: () => new Date() })
+  )
+}
 
 function openHttpsExternally(url: string): void {
   if (!isSafeExternalUrl(url)) return
@@ -15,11 +35,20 @@ function logLoadError(error: unknown): void {
   console.error('Failed to load the renderer', error)
 }
 
+// Size of the Figma mockup frames: the market overview needs 1280px for its 4 KPI columns
+const PREFERRED_SIZE = { width: 1280, height: 800 }
+const MIN_SIZE = { width: 960, height: 600 }
+
 function createWindow(): void {
+  // Small or scaled screens (e.g. 1366×768 at 125 %) get a window that still fits
+  const workArea = screen.getPrimaryDisplay().workAreaSize
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 720,
+    width: Math.min(PREFERRED_SIZE.width, workArea.width),
+    height: Math.min(PREFERRED_SIZE.height, workArea.height),
+    minWidth: Math.min(MIN_SIZE.width, workArea.width),
+    minHeight: Math.min(MIN_SIZE.height, workArea.height),
+    useContentSize: true,
     title: 'WF Compagnon',
     // Matches the dark theme background to avoid a white flash on startup
     backgroundColor: '#0a0a0a',
@@ -71,6 +100,7 @@ app
       optimizer.watchWindowShortcuts(window)
     })
 
+    setUpMarket()
     createWindow()
 
     app.on('activate', function () {
