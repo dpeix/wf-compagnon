@@ -11,7 +11,8 @@ interface SaleAdviceCardProps {
   orders: readonly MarketOrder[]
   /** Price change over the last 7 days, as a ratio */
   weekChange: number
-  bestHours: string
+  /** Busiest hours of the recent sales; null when there were none */
+  bestHours: string | null
 }
 
 const TREND_ADVICE = {
@@ -56,7 +57,11 @@ export function SaleAdviceCard({
           </div>
           <dl className="space-y-2 text-xs">
             {[
-              { label: 'Meilleur créneau', value: bestHours, className: '' },
+              {
+                label: 'Meilleur créneau (48 h)',
+                value: bestHours ?? 'pas de vente récente',
+                className: ''
+              },
               {
                 label: 'Concurrence',
                 value: `${formatCount(countInGame(orders, 'sell'))} vendeurs en jeu, ${formatCount(countAtBestPrice(orders, 'sell'))} au plus bas`,

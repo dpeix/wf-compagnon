@@ -3,11 +3,13 @@ import { cn } from '@/lib/utils'
 import { formatPlatinum } from './format'
 import { compareSetAndParts } from './item-insights'
 import { ListCard } from './list-card'
-import type { ItemDetail } from './types'
+import { partsForComparison } from './live-data'
 
 interface SetPartsCardProps {
-  setPrice: number
-  parts: ItemDetail['parts']
+  /** Best sell price in game of the set, null without any seller in game */
+  setPrice: number | null
+  /** Best sell price in game of each part, null when one of them is unknown */
+  parts: readonly { name: string; quantity: number; price: number }[] | null
 }
 
 const VERDICT_STYLES = {
@@ -21,7 +23,13 @@ function VerdictIcon({ better }: { better: keyof typeof VERDICT_STYLES }): React
   return <Icon className="size-4 shrink-0" aria-hidden="true" />
 }
 
-export function SetPartsCard({ setPrice, parts }: SetPartsCardProps): React.JSX.Element {
+function Comparison({
+  setPrice,
+  parts
+}: {
+  setPrice: number
+  parts: readonly { name: string; price: number }[]
+}): React.JSX.Element {
   const { partsTotal, difference, better } = compareSetAndParts(setPrice, parts)
   const gap = formatPlatinum(Math.abs(difference))
   const verdict =
@@ -32,12 +40,7 @@ export function SetPartsCard({ setPrice, parts }: SetPartsCardProps): React.JSX.
         : `Set et pièces rapportent autant (${formatPlatinum(partsTotal)}).`
 
   return (
-    <ListCard
-      title="Set ou pièces séparées ?"
-      description="Meilleur prix de vente en jeu de chaque pièce"
-      icon={Package}
-      contentClassName="space-y-3 px-4"
-    >
+    <>
       <dl className="space-y-2 text-xs">
         {parts.map((part) => (
           <div key={part.name} className="flex justify-between gap-3">
@@ -55,6 +58,30 @@ export function SetPartsCard({ setPrice, parts }: SetPartsCardProps): React.JSX.
         <VerdictIcon better={better} />
         {verdict}
       </p>
+    </>
+  )
+}
+
+export function SetPartsCard({ setPrice, parts }: SetPartsCardProps): React.JSX.Element {
+  return (
+    <ListCard
+      title="Set ou pièces séparées ?"
+      description="Meilleur prix de vente en jeu de chaque pièce"
+      icon={Package}
+      contentClassName="space-y-3 px-4"
+    >
+      {parts === null ? (
+        <p className="text-xs text-muted-foreground">
+          Comparaison indisponible : une pièce n&apos;a aucun vendeur en jeu parmi ses meilleurs
+          ordres, ou son prix n&apos;a pas pu être chargé.
+        </p>
+      ) : setPrice === null ? (
+        <p className="text-xs text-muted-foreground">
+          Comparaison indisponible : personne ne vend le set en jeu en ce moment.
+        </p>
+      ) : (
+        <Comparison setPrice={setPrice} parts={partsForComparison(parts)} />
+      )}
     </ListCard>
   )
 }

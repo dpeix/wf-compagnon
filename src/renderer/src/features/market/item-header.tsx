@@ -25,6 +25,11 @@ export function ItemHeader({ item }: ItemHeaderProps): React.JSX.Element {
               {tag}
             </Badge>
           ))}
+          {item.rank !== null && (
+            <Badge variant="secondary" className="bg-wf-gold/15 text-wf-gold">
+              Prix au rang {item.rank}
+            </Badge>
+          )}
           {item.ducats !== null && (
             <Badge variant="outline">{formatCount(item.ducats)} ducats</Badge>
           )}

@@ -18,6 +18,8 @@ interface ActivityCardProps {
   /** Usual sales per hour, index 0 = midnight */
   hourlySales: readonly number[]
   currentHour: number
+  /** Where the hourly sales come from */
+  description: string
 }
 
 const NBSP = ' '
@@ -46,7 +48,11 @@ function advice({ level, peakHour }: ActivityDescription, hour: number): string 
   return `${now}${NBSP}: une heure d'activité moyenne. ${peak}`
 }
 
-export function ActivityCard({ hourlySales, currentHour }: ActivityCardProps): React.JSX.Element {
+export function ActivityCard({
+  hourlySales,
+  currentHour,
+  description
+}: ActivityCardProps): React.JSX.Element {
   const activity = describeActivity(hourlySales, currentHour)
   const heights = barHeights(hourlySales, CHART_HEIGHT)
 
@@ -57,9 +63,7 @@ export function ActivityCard({ hourlySales, currentHour }: ActivityCardProps): R
           <Activity className="size-4 text-wf-gold" aria-hidden="true" />
           <h2 className="text-[15px]">Activité à cette heure</h2>
         </CardTitle>
-        <CardDescription className="text-xs">
-          Ventes habituelles par heure, comparées à la moyenne de la journée
-        </CardDescription>
+        <CardDescription className="text-xs">{description}</CardDescription>
         <CardAction>
           <Badge
             variant={activity.level === 'faible' ? 'outline' : 'secondary'}

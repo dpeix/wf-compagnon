@@ -1,6 +1,5 @@
 import { Store, Swords, Zap } from 'lucide-react'
 import { ComingSoon } from '@/components/coming-soon'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MarketTab } from '@/features/market/market-tab'
 
@@ -24,13 +23,11 @@ function App(): React.JSX.Element {
             Arbitrages
           </TabsTrigger>
         </TabsList>
-        <Badge variant="outline" className="ml-auto">
-          Données d&apos;exemple
-        </Badge>
       </header>
 
       <main className="flex flex-1 flex-col">
-        <TabsContent value="market">
+        {/* Kept mounted (hidden) so the loaded market data and chosen item survive a tab switch */}
+        <TabsContent value="market" forceMount className="data-[state=inactive]:hidden">
           <MarketTab />
         </TabsContent>
         <TabsContent value="arbitrations" className="p-6">

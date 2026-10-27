@@ -1,8 +1,28 @@
-import { app, shell, screen, BrowserWindow } from 'electron'
+import { app, ipcMain, net, shell, screen, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { isSafeExternalUrl } from './external-links'
+import { createMarketClient } from './market/client'
+import { registerMarketIpc } from './market/ipc'
+import { createMarketService } from './market/service'
+import { TRACKED_ITEMS } from './market/tracked-items'
+
+function setUpMarket(): void {
+  const client = createMarketClient({
+    // Chromium's network stack: follows the system proxy settings, like the browser
+    fetch: (url, init) => net.fetch(url, init),
+    now: () => Date.now(),
+    sleep: (ms) =>
+      new Promise((resolve) => {
+        setTimeout(resolve, ms)
+      })
+  })
+  registerMarketIpc(
+    ipcMain,
+    createMarketService({ client, trackedSlugs: TRACKED_ITEMS, now: () => new Date() })
+  )
+}
 
 function openHttpsExternally(url: string): void {
   if (!isSafeExternalUrl(url)) return
@@ -80,6 +100,7 @@ app
       optimizer.watchWindowShortcuts(window)
     })
 
+    setUpMarket()
     createWindow()
 
     app.on('activate', function () {

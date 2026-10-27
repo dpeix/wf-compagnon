@@ -22,6 +22,7 @@ Versions installées (relevées le 26/10/2026). Avant d'utiliser une API, vérif
 | shadcn/ui (style new-york) + radix-ui | radix-ui 1.8       | Composants                             | Paquet unifié `radix-ui` (`import { Slot } from 'radix-ui'`), pas de paquets `@radix-ui/react-*`. Ajout via `npx shadcn@latest add`.                       |
 | lucide-react                          | 1.61               | Icônes                                 | —                                                                                                                                                          |
 | @fontsource-variable/geist (+ -mono)  | 5.3                | Polices Geist / Geist Mono embarquées  | Importées dans `main.tsx`, branchées via `--font-sans` / `--font-mono` dans `main.css`. Pas de police distante (CSP).                                      |
+| zod                                   | 4.6                | Validation des réponses d'API (main)   | API zod 4 : `z.iso.datetime()`, nombres finis par défaut (pas de `.finite()`). Utilisé dans le main uniquement, jamais dans le preload (sandbox).          |
 | eslint                                | 9.39               | Lint                                   | **Flat config** (`eslint.config.mjs`), jamais `.eslintrc`.                                                                                                 |
 | typescript-eslint                     | 8.72               | Lint typé                              | Presets `strictTypeChecked` + `stylisticTypeChecked`.                                                                                                      |
 | prettier                              | 3.9                | Formatage                              | Sans point-virgule, guillemets simples, 100 colonnes, pas de virgule finale.                                                                               |
@@ -31,7 +32,7 @@ Versions installées (relevées le 26/10/2026). Avant d'utiliser une API, vérif
 | knip                                  | 6.43               | Code et dépendances inutilisés         | —                                                                                                                                                          |
 | lefthook                              | 2.2                | Hooks git                              | Syntaxe `jobs` (lefthook 2).                                                                                                                               |
 
-**Prévus mais pas encore installés** (ne les suppose pas présents ; leur ajout se justifie dans le commit) : zod (validation des données externes), Recharts (graphique de prix), `node:sqlite` (stockage, intégré à Node).
+**Prévus mais pas encore installés** (ne les suppose pas présents ; leur ajout se justifie dans le commit) : `node:sqlite` (stockage, intégré à Node). Les graphiques sont en SVG maison, sans Recharts.
 
 ## Architecture
 
@@ -50,7 +51,8 @@ src/
 - Couleurs propres à l'app (en plus des tokens shadcn) : `wf-gold` (accent), `success` (hausses) et `info` (joueurs en ligne), définies dans `main.css`. Les baisses utilisent `destructive`.
 - Toute la logique qui touche au disque ou au réseau vit dans le **main**. Le renderer n'a accès ni aux fichiers ni à Node.
 - Le preload expose des méthodes précises (`window.api.arbitrations.getSchedule()`…), **jamais** `ipcRenderer`. Un canal IPC par action ; le main valide les arguments reçus.
-- Les types partagés (messages IPC) iront dans `src/shared/`, à ajouter à l'`include` de `tsconfig.node.json` **et** de `tsconfig.web.json`.
+- Les types partagés (messages IPC) sont dans `src/shared/` (inclus par `tsconfig.node.json` **et** `tsconfig.web.json`) ; le renderer les réexporte depuis `features/<nom>/types.ts`.
+- Client warframe.market (`src/main/market/`) : une file à ~3 requêtes/s, un cache par point d'accès, 3 essais pour les erreurs passagères, validation zod de chaque réponse (`schemas.ts` : une entrée invalide d'une liste est écartée et signalée, la liste n'échoue que si aucune n'est valide), slugs vérifiés avant de construire une URL. Chaque réponse garde sa date de réception : les écrans affichent l'âge de leur donnée la plus ancienne, et « Actualiser » (`fresh`) contourne le cache des ordres et des statistiques. Les statistiques horaires sont datées par le début de l'heure et ne couvrent que les heures terminées : les fenêtres de 24 h se calent sur la dernière heure reçue, pas sur l'heure courante. Le prix historique n'existe qu'en API v1 (`/v1/items/{slug}/statistics`), le reste est en v2. Les pièces d'un set et leur quantité (2 lames pour Dual Kamas Prime) viennent de `/v2/item/{slug}/set`, que le catalogue ne donne pas. Objets à rang : on prend le rang max.
 - Les parseurs (`EE.log`, `arbys.txt`, tiers) sont des **fonctions pures** (texte → objets), séparées de la lecture de fichier, avec leur test à côté (`parser.ts` + `parser.test.ts`).
 - Le code testable du main ne doit pas importer `electron` (voir `src/main/external-links.ts`). `src/main/index.ts` reste le bootstrap.
 
